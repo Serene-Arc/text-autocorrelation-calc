@@ -49,6 +49,7 @@ def main(args: argparse.Namespace):
         records.append((k, results[k]))
     with open(args.output, 'w') as file:
         writer = csv.writer(file, delimiter=',')
+        writer.writerow(('period', 'correlation'))
         writer.writerows(records)
     logger.info('Program complete')
 
