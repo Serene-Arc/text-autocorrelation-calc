@@ -12,7 +12,7 @@ import autocorrelationcalc.__main__ as main
 @pytest.fixture()
 def args(tmp_path: Path) -> argparse.Namespace:
     args = argparse.Namespace()
-    args.verbose = 0
+    args.verbosity = 0
     args.input = './resources/cipher_1.txt'
     args.output = Path(tmp_path, 'output.csv')
     return args

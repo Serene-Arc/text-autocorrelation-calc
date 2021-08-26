@@ -31,12 +31,14 @@ def _add_arguments():
 
 
 def main(args: argparse.Namespace):
+    _setup_logging(args.verbosity)
     args.input = Path(args.input).expanduser().resolve()
     args.output = Path(args.output).expanduser().resolve()
 
     with open(args.input, 'r') as file:
         ciphertext = file.read()
 
+    logger.debug('Beginning calculation')
     results = {}
     for i in range(1, len(ciphertext)):
         test_text = ciphertext[i:]
@@ -51,7 +53,7 @@ def main(args: argparse.Namespace):
         writer = csv.writer(file, delimiter=',')
         writer.writerow(('period', 'correlation'))
         writer.writerows(records)
-    logger.info('Program complete')
+    logger.info(f'File written to {args.output}')
 
 
 def entry():
