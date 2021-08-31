@@ -26,34 +26,35 @@ def _setup_logging(verbosity: int):
 
 def _add_arguments():
     parser.add_argument('-v', '--verbosity', action='count', default=0)
-    parser.add_argument('input')
-    parser.add_argument('output')
+    parser.add_argument('inputs', nargs='+')
 
 
 def main(args: argparse.Namespace):
     _setup_logging(args.verbosity)
-    args.input = Path(args.input).expanduser().resolve()
-    args.output = Path(args.output).expanduser().resolve()
+    args.inputs = [Path(a).expanduser().resolve() for a in args.inputs]
 
-    with open(args.input, 'r') as file:
-        ciphertext = file.read()
+    for p in args.inputs:
+        with open(p, 'r') as file:
+            ciphertext = file.read()
 
-    logger.debug('Beginning calculation')
-    results = {}
-    for i in range(1, len(ciphertext)):
-        test_text = ciphertext[i:]
-        for j, c in enumerate(test_text):
-            if c == ciphertext[j]:
-                results[i] = results.get(i, 0) + 1
+        ciphertext = ciphertext.lower().replace(' ', '')
+        logger.debug('Beginning calculation')
+        results = {}
+        for i in range(1, len(ciphertext)):
+            test_text = ciphertext[i:]
+            count = sum([test_text[k] == ciphertext[k] for k in range(0, len(test_text))])
+            correlation = count / len(test_text)
+            results[i] = correlation
 
-    records = []
-    for k in sorted(results.keys()):
-        records.append((k, results[k]))
-    with open(args.output, 'w') as file:
-        writer = csv.writer(file, delimiter=',')
-        writer.writerow(('period', 'correlation'))
-        writer.writerows(records)
-    logger.info(f'File written to {args.output}')
+        records = []
+        for k in sorted(results.keys()):
+            records.append((k, results[k]))
+        out_path = Path(p.name + '_autocorrelation.csv')
+        with open(out_path, 'w') as file:
+            writer = csv.writer(file, delimiter=',')
+            writer.writerow(('period', 'correlation'))
+            writer.writerows(records)
+        logger.info(f'File written to {out_path}')
 
 
 def entry():

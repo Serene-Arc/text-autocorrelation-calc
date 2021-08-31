@@ -13,7 +13,7 @@ import autocorrelationcalc.__main__ as main
 def args(tmp_path: Path) -> argparse.Namespace:
     args = argparse.Namespace()
     args.verbosity = 0
-    args.input = './resources/cipher_1.txt'
+    args.inputs = ['./resources/cipher_1.txt']
     args.output = Path(tmp_path, 'output.csv')
     return args
 
