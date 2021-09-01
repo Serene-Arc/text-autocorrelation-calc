@@ -27,6 +27,8 @@ def _setup_logging(verbosity: int):
 def _add_arguments():
     parser.add_argument('-v', '--verbosity', action='count', default=0)
     parser.add_argument('inputs', nargs='+')
+    parser.add_argument('-c', '--case-sensitive', action='store_true')
+    parser.add_argument('-s', '--include-spaces', action='store_true')
 
 
 def main(args: argparse.Namespace):
@@ -37,7 +39,10 @@ def main(args: argparse.Namespace):
         with open(p, 'r') as file:
             ciphertext = file.read()
 
-        ciphertext = ciphertext.lower().replace(' ', '')
+        if not args.case_sensitive:
+            ciphertext = ciphertext.lower()
+        if not args.include_spaces:
+            ciphertext = ciphertext.replace(' ', '')
         logger.debug('Beginning calculation')
         results = {}
         for i in range(1, len(ciphertext)):
